@@ -1,3 +1,10 @@
+## One-Prompt Setup
+
+Just tell your AI assistant:
+
+```
+Set up go-zero AI tools for this project from https://github.com/xbclub/go-zero-codex-tools
+```
 
 ### codex
 
@@ -37,7 +44,7 @@ EOF
 git clone https://github.com/zeromicro/mcp-zero.git ~/.mcp-zero
 cd ~/.mcp-zero && go build -o mcp-zero main.go
 
-GOCTL_PATH="$(which goctl || true)" cat > ~/.codex/mcp.json <<EOF
+GOCTL_PATH="$(which goctl || true)" cat > .codex/mcp.json <<EOF
 {
   "mcpServers": {
     "go-zero": {
