@@ -18,6 +18,25 @@
 ./scripts/init-codex-skills.sh
 ```
 
+## 一句话加载（One-Prompt Setup）
+
+直接告诉 AI 助理：
+
+```
+Set up go-zero Codex skills for this project from <repo-url>
+```
+
+将 `<repo-url>` 替换为当前项目的仓库地址或本地路径。
+
+AI 将自动执行以下操作：
+
+1. 运行 `./scripts/init-codex-skills.sh`
+2. 拉取/更新 `ai-context` 与 `zero-skills`
+3. 安装并配置 `mcp-zero`（如检测到已安装 Go）
+4. 生成/更新 `.codex/mcp.json` 与 `.codex/config.toml`
+
+> 如果 AI 未能完成，手动执行 `./scripts/init-codex-skills.sh` 即可。
+
 ## 安装 MCP 工具（mcp-zero）
 
 该脚本会自动安装 mcp-zero（用于 goctl 能力集成），默认安装到项目内：
