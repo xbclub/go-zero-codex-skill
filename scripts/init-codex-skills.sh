@@ -1,7 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -L)"
+if [ -n "${BASH_SOURCE[0]:-}" ]; then
+  ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -L)"
+else
+  ROOT_DIR="$(pwd -L)"
+fi
+if [ -z "$ROOT_DIR" ] || [ ! -w "$ROOT_DIR" ]; then
+  echo "ROOT_DIR is not writable: $ROOT_DIR"
+  exit 1
+fi
 AI_CONTEXT_DIR="$ROOT_DIR/.codex/skills/ai-context/repo"
 ZERO_SKILLS_DIR="$ROOT_DIR/.codex/skills/zero-skills/repo"
 CODEX_DIR="$ROOT_DIR/.codex"
