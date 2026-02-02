@@ -1,6 +1,6 @@
-# go-zero Codex Skills
+# go-zero Codex tools
 
-This repo bootstraps the Codex skills environment for go-zero.
+This repo bootstraps the Codex tools environment for go-zero.
 
 ## Quick Start
 
