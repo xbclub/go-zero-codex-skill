@@ -74,23 +74,45 @@ pushd "$MCP_DIR" >/dev/null
 go build -o mcp-zero main.go
 popd >/dev/null
 
-echo "==> 6) 生成 .codex/config.toml"
-mkdir -p .codex
+echo "==> 6) 写入个人 .codex/config.toml"
+USER_CODEX_DIR="$HOME/.codex"
+USER_CODEX_CONFIG="$USER_CODEX_DIR/config.toml"
+mkdir -p "$USER_CODEX_DIR"
 
 MCP_ZERO_BIN="$MCP_DIR/mcp-zero"
 GOCTL_PATH="$(command -v goctl 2>/dev/null || true)"
 
-cat > .codex/config.toml <<EOF
-[features]
-skills = true
-
-[mcp_servers.go-zero]
-type = "stdio"
-command = "$MCP_ZERO_BIN"
-env = { GOCTL_PATH = "$GOCTL_PATH" }
-EOF
+if [ -f "$USER_CODEX_CONFIG" ] && grep -q "^\[mcp_servers\.go-zero\]" "$USER_CODEX_CONFIG"; then
+  # Replace existing go-zero block in user config
+  tmpfile="$(mktemp)"
+  awk -v bin="$MCP_ZERO_BIN" -v goctl="$GOCTL_PATH" '
+    BEGIN { in_block=0 }
+    /^\[mcp_servers\.go-zero\]$/ {
+      in_block=1
+      print "[mcp_servers.go-zero]"
+      print "type = \"stdio\""
+      print "command = \"" bin "\""
+      print "env = { GOCTL_PATH = \"" goctl "\" }"
+      next
+    }
+    /^\[.*\]$/ {
+      if (in_block) in_block=0
+    }
+    { if (!in_block) print }
+  ' "$USER_CODEX_CONFIG" > "$tmpfile"
+  mv "$tmpfile" "$USER_CODEX_CONFIG"
+else
+  # Append minimal config if not present
+  {
+    echo ""
+    echo "[mcp_servers.go-zero]"
+    echo "type = \"stdio\""
+    echo "command = \"$MCP_ZERO_BIN\""
+    echo "env = { GOCTL_PATH = \"$GOCTL_PATH\" }"
+  } >> "$USER_CODEX_CONFIG"
+fi
 
 echo "==> 完成 ✅"
 echo "  - MCP: $MCP_ZERO_BIN"
 echo "  - goctl: ${GOCTL_PATH:-未检测到}"
-echo "  - config: .codex/config.toml"
+echo "  - config: $USER_CODEX_CONFIG"
